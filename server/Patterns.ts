@@ -1,41 +1,41 @@
-const BLANK_SYMBOL = "...";
+export const BLANK_SYMBOL = "...";
 
 export abstract class Pattern {
   abstract toString(): string;
   abstract frequency: number;
   
-  get_letters() {
+  getLetters() {
     return this.toString().replace(BLANK_SYMBOL, "");
   }
 }
 
 export class LeftPattern extends Pattern {
-  constructor(private _letters: string, public frequency: number) {
+  constructor(private letters: string, public frequency: number) {
     super();
   }
 
   toString(): string {
-    return this._letters + BLANK_SYMBOL;
+    return this.letters + BLANK_SYMBOL;
   }
 }
 
 export class RightPattern extends Pattern {
-  constructor(private _letters: string, public frequency: number) {
+  constructor(private letters: string, public frequency: number) {
     super();
   }
 
   toString(): string {
-    return BLANK_SYMBOL + this._letters;
+    return BLANK_SYMBOL + this.letters;
   }
 }
 
 export class MiddlePattern extends Pattern {
-  constructor(private _letters: string, public frequency: number) {
+  constructor(private letters: string, public frequency: number) {
     super();
   }
 
   toString(): string {
-    return BLANK_SYMBOL + this._letters + BLANK_SYMBOL;
+    return BLANK_SYMBOL + this.letters + BLANK_SYMBOL;
   }
 }
 
