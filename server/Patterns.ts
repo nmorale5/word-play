@@ -1,6 +1,6 @@
 const BLANK_SYMBOL = "...";
 
-abstract class Pattern {
+export abstract class Pattern {
   abstract toString(): string;
   abstract frequency: number;
   
@@ -9,7 +9,7 @@ abstract class Pattern {
   }
 }
 
-class LeftPattern extends Pattern {
+export class LeftPattern extends Pattern {
   constructor(private _letters: string, public frequency: number) {
     super();
   }
@@ -19,7 +19,7 @@ class LeftPattern extends Pattern {
   }
 }
 
-class RightPattern extends Pattern {
+export class RightPattern extends Pattern {
   constructor(private _letters: string, public frequency: number) {
     super();
   }
@@ -29,7 +29,7 @@ class RightPattern extends Pattern {
   }
 }
 
-class MiddlePattern extends Pattern {
+export class MiddlePattern extends Pattern {
   constructor(private _letters: string, public frequency: number) {
     super();
   }
@@ -39,7 +39,7 @@ class MiddlePattern extends Pattern {
   }
 }
 
-class ExactMultiPattern extends Pattern {
+export class ExactMultiPattern extends Pattern {
   constructor(private frontLetters: string, private backLetters: string, public frequency: number) {
     super();
   }
@@ -49,7 +49,7 @@ class ExactMultiPattern extends Pattern {
   }
 }
 
-class LeftMultiPattern extends Pattern {
+export class LeftMultiPattern extends Pattern {
   constructor(private frontLetters: string, private backLetters: string, public frequency: number) {
     super();
   }
@@ -59,7 +59,7 @@ class LeftMultiPattern extends Pattern {
   }
 }
 
-class RightMultiPattern extends Pattern {
+export class RightMultiPattern extends Pattern {
   constructor(private frontLetters: string, private backLetters: string, public frequency: number) {
     super();
   }
@@ -69,7 +69,7 @@ class RightMultiPattern extends Pattern {
   }
 }
 
-class MiddleMultiPattern extends Pattern {
+export class MiddleMultiPattern extends Pattern {
   constructor(private frontLetters: string, private backLetters: string, public frequency: number) {
     super();
   }
