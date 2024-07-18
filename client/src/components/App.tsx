@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Router } from "@reach/router";
 
-import { get, post } from "../utilities";
 import NotFound from "./pages/NotFound";
-import Skeleton from "./pages/Skeleton";
+import Home from "./pages/Home";
 import { socket } from "../client-socket";
 import "../utilities.css";
+import Login from "./pages/Login";
+import GameLobby from "./pages/GameLobby";
 
 const App = () => {
-  const [userId, setUserId] = useState<string | undefined>(undefined);
-
   useEffect(() => {
     socket.on("connect", () => {
-      post("/api/initsocket", { socketid: socket.id });
+      if (!localStorage.getItem("name") && window.location.pathname !== "/login") {
+        window.location.replace("/login");
+      }
     })
   }, []);
 
@@ -20,7 +21,9 @@ const App = () => {
   // All the pages need to have the props extended via RouteComponentProps for @reach/router to work properly. Please use the Skeleton as an example.
   return (
     <Router>
-      <Skeleton path="/" userId={userId} />
+      <Home path="/" />
+      <Login path="/login" />
+      <GameLobby path="/game" />
       <NotFound default={true} />
     </Router>
   );

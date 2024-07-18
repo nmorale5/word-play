@@ -39,7 +39,7 @@ export default class PatternGenerator {
     }
   }
 
-  public generateRandom(filterFunc: (p: Pattern) => boolean): Pattern {
+  public generateRandom(filterFunc?: (p: Pattern) => boolean): Pattern {
     filterFunc = filterFunc ?? ((p: Pattern) => true);
     const filtered = this.allPatterns.filter(filterFunc);
     if (!filtered) {

@@ -4,8 +4,12 @@ export abstract class Pattern {
   abstract toString(): string;
   abstract frequency: number;
   
-  getLetters() {
+  getLetters(): string {
     return this.toString().replace(BLANK_SYMBOL, "");
+  }
+
+  toRegex(): RegExp {
+    return new RegExp(this.toString().replace(BLANK_SYMBOL, ".+"));
   }
 }
 

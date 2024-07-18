@@ -1,15 +1,5 @@
 import express from "express";
-import socketManager from "./server-socket";
 const router = express.Router();
-
-router.post("/initsocket", (req, res) => {
-  // do nothing if user not logged in
-  if (req.user) {
-    const socket = socketManager.getSocketFromSocketID(req.body.socketid);
-    if (socket !== undefined) socketManager.addUser(req.user, socket);
-  }
-  res.send({});
-});
 
 // |------------------------------|
 // | write your API methods below!|
