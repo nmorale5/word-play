@@ -26,6 +26,7 @@ export class Game {
 
   // returns true iff the guess is valid and will be accepted
   makeGuess(guess: string, socketId: string) {
+    guess = guess.replace(/[^a-zA-Z]/g, '').toLowerCase();
     console.log(guess)
     console.log(socketId)
     console.log(this.currentPattern)
