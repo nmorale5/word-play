@@ -31,6 +31,7 @@ export const init = (server: http.Server): void => {
         currentUser.id = id;
         currentUser.name = name;
       }
+      currentLobby?.sendLobbyInfo();
     });
 
     socket.on("disconnect", () => {
@@ -63,7 +64,11 @@ export const init = (server: http.Server): void => {
       const newGame = new Game([...currentLobby.users]);
       currentLobby.game = newGame;
       newGame.start();
-    })
+    });
+
+    socket.on("guess", (guess: string) => {
+      currentLobby?.game?.makeGuess(guess, currentUser.socket.id);
+    });
   });
 };
 

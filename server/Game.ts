@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Pattern } from "./Patterns";
-import PatternGenerator from './PatternGenerator';
+import { Pattern, PatternGenerator } from './Pattern';
 import { User } from './User';
 import { Players } from './GamePlayers';
 
@@ -18,7 +17,7 @@ export class Game {
 
   constructor(users: User[]) {
     if (!Game.wordBank) {
-      const filePath = path.join(__dirname, 'wordlist-20210729.json');
+      const filePath = path.join(__dirname, 'wordlist-20210729.txt');
       const data = fs.readFileSync(filePath, 'utf8');
       Game.wordBank = data.split('\n');
     }
@@ -27,6 +26,12 @@ export class Game {
 
   // returns true iff the guess is valid and will be accepted
   makeGuess(guess: string, socketId: string) {
+    console.log(guess)
+    console.log(socketId)
+    console.log(this.currentPattern)
+    console.log(Game.wordBank.includes(guess))
+    console.log(this.currentPattern?.toRegex())
+    console.log(this.currentPattern?.toRegex().test(guess))
     if (!this.currentPattern) {
       return;
     }
@@ -51,11 +56,14 @@ export class Game {
   }
 
   start() {
-    this.startNextRound()
+    this.startNextRound();
   }
 
   private startNextRound() {
-    this.players.forEach(player => player.guess = undefined);
+    this.players.forEach(player => {
+      player.guess = undefined;
+    });
+    this.sendPlayerData();
     const nextPattern = PatternGenerator.instance.generateRandom(pattern => pattern.frequency > 1000);
     this.currentPattern = nextPattern;
     this.players.forEach(player => player.user.socket.emit("nextPattern", nextPattern.toString()));
@@ -66,10 +74,7 @@ export class Game {
 
   private finishRound() {
     this.players.filter(player => player.lives > 0).filter(player => !player.guess).forEach(player => player.lives--);
-    this.players.forEach(player => {
-      player.user.socket.emit("lives", this.players.map(player => [player.user.id, player.lives]).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}));
-      player.user.socket.emit("guesses", this.players.map(player => [player.user.id, player.guess ?? ""]).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}));
-    });
+    this.sendPlayerData()
     setTimeout(() => {
       if (this.players.length === 1 && this.players[0].lives === 0 // single-player game over
           || this.players.length > 1 && this.players.filter(player => player.lives > 0).length < 2) { // multi-player game over
@@ -77,6 +82,10 @@ export class Game {
       } else {
         this.startNextRound();
       }
-    }, SECONDS_BETWEEN_ROUNDS * 1000);
+    }, this.players.length === 1 ? 0 : SECONDS_BETWEEN_ROUNDS * 1000);
+  }
+
+  private sendPlayerData() {
+    this.players.forEach(player => player.user.socket.emit("playerData", this.players.map<[string, { name: string, lives: number, guess: string }]>(player => [player.user.id, { name: player.user.name, lives: player.lives, guess: player.guess ?? "" }]).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})));
   }
 }
