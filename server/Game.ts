@@ -6,7 +6,7 @@ import { Players } from './GamePlayers';
 
 const STARTING_LIVES = 5;
 const SECONDS_PER_ROUND = 20;
-const SECONDS_BETWEEN_ROUNDS = 5;
+const SECONDS_BETWEEN_ROUNDS = 1;
 
 export class Game {
   players: Players[];
@@ -36,19 +36,19 @@ export class Game {
     if (!this.currentPattern) {
       return;
     }
-    if (!Game.wordBank.includes(guess)) {
-      this.players.forEach(player => player.user.socket.emit("acceptance", "not a real word"));
-      return;
-    }
-    if (!this.currentPattern?.toRegex().test(guess)) {
-      this.players.forEach(player => player.user.socket.emit("acceptance", "does not match pattern"));
-      return;
-    }
-    this.players.forEach(player => player.user.socket.emit("acceptance", "")); // means the word is actually accepted
     const guesser = this.players.find(player => player.user.socket.id === socketId);
     if (!guesser) {
       throw new Error(`guesser socket ID ${socketId} not found in player list`);
     }
+    if (!Game.wordBank.includes(guess)) {
+      guesser.user.socket.emit("acceptance", "not a real word");
+      return;
+    }
+    if (!this.currentPattern?.toRegex().test(guess)) {
+      guesser.user.socket.emit("acceptance", "does not match pattern");
+      return;
+    }
+    guesser.user.socket.emit("acceptance", ""); // means the word is actually accepted
     guesser.guess = guess;
     if (this.players.every(player => player.guess)) {
       clearTimeout(this.finishRoundTimeout);
