@@ -1,5 +1,5 @@
 import { RouteComponentProps } from "@reach/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { socket } from "../../client-socket";
 
 type PlayerData = { [key: string]: { name: string, guess: string, lives: number } };
@@ -10,6 +10,8 @@ const GameLobby = (props: RouteComponentProps) => {
   const [playerData, setPlayerData] = useState<PlayerData | undefined>(undefined);
   const [lobbyUsers, setLobbyUsers] = useState<string[] | undefined>(undefined);
   const [acceptanceMessage, setAcceptanceMessage] = useState<string | undefined>(undefined);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const userId = localStorage.getItem("id");
   if (!userId) throw new Error("ID not found, should be redirecting to login page shortly...");
@@ -30,6 +32,10 @@ const GameLobby = (props: RouteComponentProps) => {
       setCurrentPattern(pattern);
       setAcceptanceMessage(undefined);
       setInGame(true);
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.value = "";
+      }
     });
     socket.on("playerData", (pd: PlayerData) => {
       setPlayerData(pd);
@@ -67,7 +73,7 @@ const GameLobby = (props: RouteComponentProps) => {
           <p>Waiting for other players...</p>
         ) : (
           <>
-            <input id="guess" onKeyDown={handleKeyDown}></input>
+            <input id="guess" ref={inputRef} onKeyDown={handleKeyDown}></input>
             <button id="guess-button" onClick={handleGuess}>Enter</button>
           </>
         )}
